@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planes y Precios &mdash; Core Dynamic Group</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cyan: #1CC2E6;
+      --cyan-dark: #17a8c8;
+      --gold: #D4A34F;
+      --bg: #020B14;
+      --card: #041830;
+      --card2: #062035;
+      --border: #0d2d45;
+      --text: #ffffff;
+      --muted: #9ca3af;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; overflow-x: hidden; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 64px;
+      background: rgba(2,11,20,0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    .logo-cdg { font-size: 22px; font-weight: 900; letter-spacing: 1px; font-family: 'Inter', sans-serif; }
+    .cdg-c { color: #D4A34F; }
+    .cdg-dg { color: #1CC2E6; }
+    .logo-name { display: flex; flex-direction: column; line-height: 1; gap: 1px; }
+    .logo-core { color: #FFFFFF; font-size: 13px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; }
+    .logo-group { color: #1CC2E6; font-size: 9px; font-weight: 600; letter-spacing: 6px; text-transform: uppercase; }
+
+    .nav-right { display: flex; align-items: center; gap: 24px; }
+    .nav-right a { color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
+    .nav-right a:hover { color: var(--text); }
+    .btn-nav {
+      background: transparent; border: 1.5px solid var(--cyan); color: var(--cyan);
+      padding: 8px 20px; border-radius: 4px; font-size: 12px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .btn-nav:hover { background: var(--cyan); color: #fff; }
+
+    /* HEADER */
+    .page-header {
+      padding: 130px 40px 80px; text-align: center;
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(28,194,230,0.12) 0%, transparent 70%);
+    }
+    .page-header h1 { font-size: clamp(36px, 6vw, 64px); font-weight: 900; letter-spacing: -1px; margin-bottom: 16px; }
+    .page-header p { color: var(--muted); font-size: 17px; max-width: 500px; margin: 0 auto; }
+
+    /* PLANS GRID */
+    .plans-section { padding: 40px 40px 100px; }
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px; max-width: 1280px; margin: 0 auto;
+    }
+    .plan-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 36px 28px; position: relative;
+      display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s;
+    }
+    .plan-card:hover { border-color: rgba(28,194,230,0.5); transform: translateY(-4px); }
+    .plan-card.featured { border-color: var(--cyan); }
+    .plan-card.best { border-color: #D4A34F; }
+    .badge {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: var(--cyan); color: #fff; font-size: 11px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 16px;
+      border-radius: 20px; white-space: nowrap;
+    }
+    .badge.gold { background: #D4A34F; }
+    .plan-name {
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;
+    }
+    .plan-price-wrap { margin-bottom: 8px; }
+    .plan-price { font-size: 48px; font-weight: 900; line-height: 1; }
+    .plan-period { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
+    .plan-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
+    .divider { border: none; border-top: 1px solid var(--border); margin-bottom: 24px; }
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 12px; flex: 1; margin-bottom: 32px; }
+    .feature-list li { font-size: 14px; color: var(--muted); display: flex; gap: 10px; align-items: flex-start; line-height: 1.4; }
+    .feature-list li.included { color: var(--text); }
+    .feature-list li.included::before { content: "✓"; color: var(--cyan); font-weight: 900; flex-shrink: 0; }
+    .feature-list li.excluded::before { content: "✕"; color: #555; font-weight: 900; flex-shrink: 0; }
+    .btn-plan {
+      display: block; text-align: center; padding: 14px 24px;
+      border-radius: 8px; font-size: 13px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none;
+      transition: all 0.2s; border: 1.5px solid;
+    }
+    .btn-plan.outline { background: transparent; border-color: var(--cyan); color: var(--cyan); }
+    .btn-plan.outline:hover, .plan-card.featured .btn-plan.outline { background: var(--cyan); color: #fff; }
+    .btn-plan.solid { background: var(--cyan); border-color: var(--cyan); color: #fff; }
+    .btn-plan.solid:hover { background: var(--cyan-dark); }
+    .btn-plan.gold-btn { background: #D4A34F; border-color: #D4A34F; color: #000; }
+    .btn-plan.gold-btn:hover { background: #b8893e; border-color: #b8893e; }
+
+    /* COMPARE TABLE */
+    .compare-section { padding: 0 40px 100px; }
+    .compare-section h2 {
+      font-size: clamp(28px, 4vw, 42px); font-weight: 900; text-align: center;
+      margin-bottom: 12px; letter-spacing: -0.5px;
+    }
+    .compare-section p { text-align: center; color: var(--muted); font-size: 15px; margin-bottom: 48px; }
+    .table-wrap { overflow-x: auto; max-width: 1000px; margin: 0 auto; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; background: var(--card); }
+    thead { background: var(--card2); }
+    thead th {
+      padding: 16px 20px; text-align: center;
+      font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--text); border-bottom: 2px solid var(--border);
+    }
+    thead th:first-child { text-align: left; }
+    thead th.highlight { color: var(--cyan); }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(28,194,230,0.04); }
+    tbody td { padding: 14px 20px; font-size: 14px; color: var(--muted); text-align: center; }
+    tbody td:first-child { text-align: left; color: var(--text); font-weight: 500; }
+    .check { color: var(--cyan); font-size: 18px; font-weight: 900; }
+    .cross { color: #444; font-size: 16px; }
+
+    /* FOOTER */
+    footer {
+      padding: 60px 40px 40px; border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      text-align: center;
+    }
+    .footer-logo { display: flex; align-items: center; gap: 8px; }
+    .footer-desc { font-size: 13px; color: var(--muted); max-width: 500px; line-height: 1.7; }
+    .footer-copy { font-size: 12px; color: #555; margin-top: 12px; }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .page-header { padding: 100px 20px 60px; }
+      .plans-section, .compare-section { padding-left: 20px; padding-right: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">
+    <span class="logo-cdg"><span class="cdg-c">C</span><span class="cdg-dg">DG</span></span><span class="logo-name"><span class="logo-core">CORE DYNAMIC</span><span class="logo-group">GROUP</span></span>
+  </a>
+  <div class="nav-right">
+    <a href="index.html">Inicio</a>
+    <a href="index.html" class="btn-nav">Volver</a>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<div class="page-header">
+  <h1>Planes y Precios</h1>
+  <p>Elige el plan que mejor se adapte a tus objetivos. Desde emprendedores hasta agencias de alto nivel.</p>
+</div>
+
+<!-- PLANS -->
+<section class="plans-section">
+  <div class="plans-grid">
+
+    <!-- PRO -->
+    <div class="plan-card">
+      <div class="plan-name">GHL Pro</div>
+      <div class="plan-price-wrap">
+        <div class="plan-price">$48</div>
+        <div class="plan-period">/year</div>
+      </div>
+      <div class="plan-desc">Ideal para emprendedores que est&aacute;n comenzando.</div>
+      <hr class="divider" />
+      <ul class="feature-list">
+        <li class="included">CRM &amp; Gesti&oacute;n de Pipeline</li>
+        <li class="included">Embudos y Sitios Web</li>
+        <li class="included">Email Marketing Base</li>
+        <li class="included">Automatizaciones (Workflows)</li>
+        <li class="included">Gesti&oacute;n de Reputaci&oacute;n</li>
+        <li class="excluded">Cursos y Comunidades</li>
+        <li class="excluded">Marca Blanca (Partner Multimarca Lifetime)</li>
+        <li class="excluded">Programa de Partners</li>
+      </ul>
+      <a href="https://buy.stripe.com/8x28wR5028XgejN0Zr77O06" target="_blank" class="btn-plan outline">Seleccionar Plan</a>
+    </div>
+
+    <!-- PREMIUM -->
+    <div class="plan-card">
+      <div class="plan-name">GHL Premium</div>
+      <div class="plan-price-wrap">
+        <div class="plan-price">$97</div>
+        <div class="plan-period">/year</div>
+      </div>
+      <div class="plan-desc">Para negocios establecidos que necesitan m&aacute;s poder.</div>
+      <hr class="divider" />
+      <ul class="feature-list">
+        <li class="included">CRM &amp; Gesti&oacute;n de Pipeline</li>
+        <li class="included">Embudos y Sitios Web Ilimitados</li>
+        <li class="included">Email &amp; SMS Marketing Avanzado</li>
+        <li class="included">Automatizaciones (Workflows)</li>
+        <li class="included">Gesti&oacute;n de Reputaci&oacute;n</li>
+        <li class="included">Cursos y Comunidades</li>
+        <li class="excluded">Marca Blanca (Partner Multimarca Lifetime)</li>
+        <li class="excluded">Programa de Partners</li>
+      </ul>
+      <a href="https://buy.stripe.com/28E5kFezoaXVepY85CcMM0b?am_id=josejuanvargasbravo7636" target="_blank" class="btn-plan outline">Seleccionar Plan</a>
+    </div>
+
+    <!-- PARTNER (featured) -->
+    <div class="plan-card featured">
+      <div class="badge">M&aacute;s Popular</div>
+      <div class="plan-name">GHL Partner</div>
+      <div class="plan-price-wrap">
+        <div class="plan-price">$127</div>
+        <div class="plan-period">/year</div>
+      </div>
+      <div class="plan-desc">Para agencias que quieren revender el software.</div>
+      <hr class="divider" />
+      <ul class="feature-list">
+        <li class="included">Todo lo de Premium</li>
+        <li class="included">Programa de Partners (Revendedor)</li>
+        <li class="included">Comisi&oacute;n Directa del 70%</li>
+        <li class="included">Ingreso Residual del 15%</li>
+        <li class="included">Comisiones por Servicios DFY</li>
+        <li class="included">Marca Blanca (Partner Multimarca Lifetime)</li>
+      </ul>
+      <a href="https://buy.stripe.com/6oUbJ3dvk3vt95E3PmcMM0d?am_id=josejuanvargasbravo1737" target="_blank" class="btn-plan solid">Seleccionar Plan</a>
+    </div>
+
+    <!-- PARTNER MULTIMARCA LIFETIME -->
+    <div class="plan-card">
+      <div class="plan-name">Partner Multimarca Lifetime</div>
+      <div class="plan-price-wrap">
+        <div class="plan-price">$549</div>
+        <div class="plan-period">/year</div>
+      </div>
+      <div class="plan-desc">Tu propio SaaS con tu marca y dominio.</div>
+      <hr class="divider" />
+      <ul class="feature-list">
+        <li class="included">Todo lo de Partner</li>
+        <li class="included">Marca Blanca Total (Tu Logo)</li>
+        <li class="included">App M&oacute;vil Personalizada</li>
+        <li class="included">Control Total de Precios</li>
+        <li class="included">Soporte Prioritario</li>
+      </ul>
+      <a href="https://buy.stripe.com/fZu5kFcrg8PN81AgC8cMM0a?am_id=josejuanvargasbravo2926" target="_blank" class="btn-plan outline">Seleccionar Plan</a>
+    </div>
+
+
+  </div>
+</section>
+
+<!-- COMPARE TABLE -->
+<section class="compare-section">
+  <h2>Comparativa Detallada</h2>
+  <p>Analiza cada caracter&iacute;stica en detalle</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Caracter&iacute;stica</th>
+          <th>PRO</th>
+          <th>PREMIUM</th>
+          <th class="highlight">PARTNER</th>
+          <th>P. MULTIMARCA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Contactos Ilimitados</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Usuarios Ilimitados</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Embudos de Venta</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Creador de Sitios Web</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Automatizaciones (Workflows)</td><td><span class="cross">✕</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Comunidades y Cursos</td><td><span class="cross">✕</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Programa de Partners</td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Comisi&oacute;n Directa 70%</td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Comisi&oacute;n Residual 15%</td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Marca Blanca (Tu Logo)</td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Control de Precios</td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td><span class="cross">✕</span></td><td><span class="check">✓</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <span class="logo-cdg"><span class="cdg-c">C</span><span class="cdg-dg">DG</span></span><span class="logo-name"><span class="logo-core">CORE DYNAMIC</span><span class="logo-group">GROUP</span></span>
+  </div>
+  <p class="footer-desc">Core Dynamic Group &mdash; La plataforma todo en uno que te permite construir un negocio digital rentable, escalable y con ingresos residuales reales.</p>
+  <p class="footer-copy">&copy; 2026 Core Dynamic Group. Todos los derechos reservados.</p>
+</footer>
+
+<!-- WHATSAPP BUTTON -->
+<a href="https://wa.me/2205566117" target="_blank" class="whatsapp-btn" title="Escr&iacute;benos por WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="28" height="28">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+<style>
+  .whatsapp-btn {
+    position: fixed; bottom: 28px; right: 28px; z-index: 999;
+    background: #25D366; color: #fff;
+    width: 60px; height: 60px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+  }
+  .whatsapp-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 28px rgba(37,211,102,0.7);
+  }
+</style>
+</body>
+</html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Core Dynamic Group</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cyan: #1CC2E6;
+      --cyan-dark: #17a8c8;
+      --gold: #D4A34F;
+      --bg: #020B14;
+      --card: #041830;
+      --card2: #062035;
+      --border: #0d2d45;
+      --text: #ffffff;
+      --muted: #9ca3af;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; overflow-x: hidden; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 64px;
+      background: rgba(2,11,20,0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    .logo-cdg { font-size: 22px; font-weight: 900; letter-spacing: 1px; font-family: 'Inter', sans-serif; }
+    .cdg-c { color: #D4A34F; }
+    .cdg-dg { color: #1CC2E6; }
+    .logo-name { display: flex; flex-direction: column; line-height: 1; gap: 1px; }
+    .logo-core { color: #FFFFFF; font-size: 13px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; }
+    .logo-group { color: #1CC2E6; font-size: 9px; font-weight: 600; letter-spacing: 6px; text-transform: uppercase; }
+
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 600;
+      letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .btn-nav {
+      background: transparent; border: 1.5px solid var(--cyan); color: var(--cyan);
+      padding: 8px 20px; border-radius: 4px; font-size: 12px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .btn-nav:hover { background: var(--cyan); color: #fff; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 100px 24px 60px;
+      background: radial-gradient(ellipse 80% 60% at 50% 10%, rgba(28,194,230,0.15) 0%, transparent 70%);
+    }
+    .hero-label {
+      display: inline-block; background: rgba(28,194,230,0.12); border: 1px solid rgba(28,194,230,0.3);
+      color: var(--cyan); font-size: 12px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 6px 16px; border-radius: 20px; margin-bottom: 28px;
+    }
+    .hero h1 { font-size: clamp(40px, 7vw, 80px); font-weight: 900; line-height: 1.05; letter-spacing: -1px; max-width: 900px; }
+    .hero h1 span { color: #D4A34F; }
+    .hero p { font-size: 18px; color: var(--muted); max-width: 560px; margin: 24px auto 0; line-height: 1.7; }
+    .hero-ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
+    .btn-primary {
+      background: var(--cyan); color: #fff; border: none; padding: 16px 36px;
+      border-radius: 6px; font-size: 14px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; cursor: pointer; text-decoration: none;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-primary:hover { background: var(--cyan-dark); transform: translateY(-1px); }
+    .btn-outline {
+      background: transparent; color: var(--text); border: 1.5px solid var(--border);
+      padding: 16px 36px; border-radius: 6px; font-size: 14px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer;
+      text-decoration: none; transition: border-color 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--muted); }
+
+    /* STATS */
+    .stats {
+      display: flex; justify-content: center; gap: 60px; flex-wrap: wrap;
+      padding: 60px 40px;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 48px; font-weight: 900; color: var(--cyan); line-height: 1; }
+    .stat-label { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 8px; max-width: 200px; }
+
+    /* SECTION COMMON */
+    section { padding: 100px 40px; }
+    .section-title { font-size: clamp(28px, 4vw, 48px); font-weight: 900; text-align: center; letter-spacing: -0.5px; margin-bottom: 16px; }
+    .section-sub { text-align: center; color: var(--muted); font-size: 16px; max-width: 560px; margin: 0 auto 60px; }
+
+    /* TOOLS MARQUEE */
+    .tools-section { padding: 60px 0; overflow: hidden; }
+    .tools-section h3 { text-align: center; font-size: 13px; font-weight: 700; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 32px; }
+    .marquee-track { display: flex; gap: 40px; white-space: nowrap; animation: marquee 20s linear infinite; }
+    .marquee-wrap { overflow: hidden; }
+    .marquee-item {
+      display: inline-flex; align-items: center; background: var(--card); border: 1px solid var(--border);
+      padding: 10px 24px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--muted);
+      flex-shrink: 0;
+    }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* COMPARISON */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 880px; margin: 0 auto; }
+    .compare-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 32px; position: relative;
+    }
+    .compare-card.featured { border-color: var(--cyan); }
+    .compare-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--cyan); color: #fff; font-size: 11px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase; padding: 4px 16px; border-radius: 20px;
+    }
+    .compare-card h3 { font-size: 20px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; }
+    .compare-card .price-range { color: var(--muted); font-size: 14px; margin-bottom: 20px; font-weight: 600; }
+    .compare-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .compare-list li { font-size: 14px; color: var(--muted); display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
+    .compare-list li.bad::before { content: "✕"; color: #ef4444; font-size: 12px; flex-shrink: 0; margin-top: 2px; }
+    .compare-list li.good::before { content: "✓"; color: #22c55e; font-size: 12px; flex-shrink: 0; margin-top: 2px; }
+    .compare-list li.good { color: var(--text); }
+
+    /* PLAN CARDS PREVIEW */
+    .plans-preview {
+      display: grid;
+      grid-template-columns: repeat(5, 220px);
+      gap: 20px;
+      justify-content: center;
+      padding-bottom: 12px;
+    }
+    @media (max-width: 1200px) {
+      .plans-preview { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .plans-preview { grid-template-columns: 1fr; }
+    }
+    .plan-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px 24px; position: relative; transition: border-color 0.2s;
+    }
+    .plan-card:hover { border-color: var(--cyan); }
+    .plan-card.featured { border-color: var(--cyan); }
+    .plan-card .badge {
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      background: var(--cyan); color: #fff; font-size: 10px; font-weight: 700;
+      letter-spacing: 1px; padding: 3px 12px; border-radius: 20px; text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .plan-name { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
+    .plan-price { font-size: 32px; font-weight: 900; color: var(--text); line-height: 1; }
+    .plan-period { font-size: 12px; color: var(--muted); font-weight: 500; }
+    .plan-desc { font-size: 13px; color: var(--muted); margin: 12px 0; line-height: 1.5; }
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .plan-features li { font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+    .plan-features li::before { content: "✓"; color: var(--cyan); font-weight: 700; flex-shrink: 0; }
+    .btn-plan {
+      display: block; text-align: center; background: transparent;
+      border: 1.5px solid var(--cyan); color: var(--cyan); padding: 10px;
+      border-radius: 6px; font-size: 12px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; text-decoration: none; transition: all 0.2s;
+    }
+    .btn-plan:hover, .plan-card.featured .btn-plan { background: var(--cyan); color: #fff; }
+
+    /* TESTIMONIALS */
+    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 960px; margin: 0 auto; }
+    .testi-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+    .testi-quote { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+    .testi-author { font-size: 14px; font-weight: 700; color: var(--text); }
+    .testi-role { font-size: 12px; color: var(--cyan); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+    /* CTA SECTION */
+    .cta-section {
+      text-align: center; padding: 100px 40px;
+      background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(28,194,230,0.1) 0%, transparent 70%);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .cta-section h2 { font-size: clamp(32px, 5vw, 56px); font-weight: 900; max-width: 700px; margin: 0 auto 24px; }
+    .cta-section h2 span { color: var(--cyan); }
+    .cta-section p { color: var(--muted); font-size: 16px; max-width: 480px; margin: 0 auto 40px; }
+
+    /* FAQ */
+    .faq-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .faq-q {
+      padding: 20px 24px; font-size: 15px; font-weight: 600; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: color 0.2s;
+    }
+    .faq-q:hover { color: var(--cyan); }
+    .faq-q .icon { font-size: 18px; color: var(--cyan); transition: transform 0.2s; }
+    .faq-a { padding: 0 24px 20px; font-size: 14px; color: var(--muted); line-height: 1.7; display: none; }
+    .faq-item.open .faq-a { display: block; }
+    .faq-item.open .icon { transform: rotate(45deg); }
+
+    /* FOOTER */
+    footer {
+      padding: 60px 40px 40px;
+      border-top: 1px solid var(--border);
+      display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: start;
+    }
+    .footer-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .footer-desc { font-size: 13px; color: var(--muted); max-width: 400px; line-height: 1.7; }
+    .footer-legal { font-size: 11px; color: #555; max-width: 400px; line-height: 1.6; margin-top: 12px; }
+    .footer-copy { font-size: 12px; color: #555; margin-top: 40px; text-align: center; grid-column: 1/-1; }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      section { padding: 70px 20px; }
+      .stats { gap: 30px; }
+      .compare-grid { grid-template-columns: 1fr; }
+      footer { grid-template-columns: 1fr; }
+      .plans-preview { flex-direction: column; }
+      .plan-card { flex: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="logo">
+    <span class="logo-cdg"><span class="cdg-c">C</span><span class="cdg-dg">DG</span></span><span class="logo-name"><span class="logo-core">CORE DYNAMIC</span><span class="logo-group">GROUP</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="#precios">Planes</a>
+    <a href="#demo">Demo</a>
+    <a href="#beneficios">Beneficios</a>
+    <a href="#testimonios">Testimonios</a>
+    <a href="#faq">FAQ</a>
+    <a href="https://calendar.app.google/LPseahi94kvUVEzk7" target="_blank" class="btn-nav">Agendar Cita</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <span class="hero-label">Core Dynamic Group</span>
+  <h1>&iquest;Quieres un<br><span>Negocio Digital</span><br>que se Paga Solo?</h1>
+  <p>Imagina tener tu propio software de marketing con tu logo, que otros pagan mensualmente, y t&uacute; cobras comisi&oacute;n por cada cliente de tu red. Eso es Core Dynamic Group.</p>
+  <div class="hero-ctas">
+    <a href="#precios" class="btn-primary">Ver el Plan Completo</a>
+    <a href="#cita" class="btn-outline">Agendar Presentaci&oacute;n 1:1</a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">70%</div>
+    <div class="stat-label">Comisi&oacute;n Directa</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">+1.000</div>
+    <div class="stat-label">Partners Activos en 15 Pa&iacute;ses de Latam, USA y Europa</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">+10k</div>
+    <div class="stat-label">Clientes Satisfechos en todo el Mundo</div>
+  </div>
+</div>
+
+<!-- TOOLS MARQUEE -->
+<section class="tools-section">
+  <h3>Un solo software que reemplaza a m&aacute;s de 15 herramientas</h3>
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span class="marquee-item">ClickFunnels</span>
+      <span class="marquee-item">Mailchimp</span>
+      <span class="marquee-item">Calendly</span>
+      <span class="marquee-item">HubSpot</span>
+      <span class="marquee-item">WordPress</span>
+      <span class="marquee-item">Kajabi</span>
+      <span class="marquee-item">ActiveCampaign</span>
+      <span class="marquee-item">Typeform</span>
+      <span class="marquee-item">Salesforce</span>
+      <span class="marquee-item">Wix</span>
+      <span class="marquee-item">Zapier</span>
+      <span class="marquee-item">Klaviyo</span>
+      <!-- duplicate for seamless loop -->
+      <span class="marquee-item">ClickFunnels</span>
+      <span class="marquee-item">Mailchimp</span>
+      <span class="marquee-item">Calendly</span>
+      <span class="marquee-item">HubSpot</span>
+      <span class="marquee-item">WordPress</span>
+      <span class="marquee-item">Kajabi</span>
+      <span class="marquee-item">ActiveCampaign</span>
+      <span class="marquee-item">Typeform</span>
+      <span class="marquee-item">Salesforce</span>
+      <span class="marquee-item">Wix</span>
+      <span class="marquee-item">Zapier</span>
+      <span class="marquee-item">Klaviyo</span>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS PREVIEW -->
+<section id="precios">
+  <h2 class="section-title">Planes y Precios</h2>
+  <p class="section-sub">Elige el plan que mejor se adapte a tus objetivos.</p>
+  <div class="plans-preview">
+
+    <div class="plan-card">
+      <div class="plan-name">GHL Pro</div>
+      <div class="plan-price">$48</div>
+      <div class="plan-period">/year</div>
+      <div class="plan-desc">Ideal para emprendedores que est&aacute;n comenzando.</div>
+      <ul class="plan-features">
+        <li>CRM &amp; Gesti&oacute;n de Pipeline</li>
+        <li>Embudos y Sitios Web</li>
+        <li>Email Marketing Base</li>
+        <li>Automatizaciones</li>
+      </ul>
+      <a href="https://buy.stripe.com/8x28wR5028XgejN0Zr77O06" target="_blank" class="btn-plan">Seleccionar Plan</a>
+    </div>
+
+    <div class="plan-card">
+      <div class="plan-name">GHL Premium</div>
+      <div class="plan-price">$97</div>
+      <div class="plan-period">/year</div>
+      <div class="plan-desc">Para negocios establecidos que necesitan m&aacute;s poder.</div>
+      <ul class="plan-features">
+        <li>CRM &amp; Pipeline Avanzado</li>
+        <li>Embudos y Sitios Ilimitados</li>
+        <li>Email &amp; SMS Avanzado</li>
+        <li>Cursos y Comunidades</li>
+      </ul>
+      <a href="https://buy.stripe.com/28E5kFezoaXVepY85CcMM0b?am_id=josejuanvargasbravo7636" target="_blank" class="btn-plan">Seleccionar Plan</a>
+    </div>
+
+    <div class="plan-card featured">
+      <div class="badge">M&aacute;s Popular</div>
+      <div class="plan-name">GHL Partner</div>
+      <div class="plan-price">$127</div>
+      <div class="plan-period">/year</div>
+      <div class="plan-desc">Para agencias que quieren revender el software.</div>
+      <ul class="plan-features">
+        <li>Todo lo de Premium</li>
+        <li>Comisi&oacute;n Directa 70%</li>
+        <li>Ingreso Residual 15%</li>
+        <li>Marca Blanca</li>
+      </ul>
+      <a href="https://buy.stripe.com/6oUbJ3dvk3vt95E3PmcMM0d?am_id=josejuanvargasbravo1737" target="_blank" class="btn-plan">Seleccionar Plan</a>
+    </div>
+
+    <div class="plan-card">
+      <div class="plan-name">Partner Multimarca Lifetime</div>
+      <div class="plan-price">$549</div>
+      <div class="plan-period">/year</div>
+      <div class="plan-desc">Tu propio SaaS con tu marca y dominio.</div>
+      <ul class="plan-features">
+        <li>Todo lo de Partner</li>
+        <li>Marca Blanca Total</li>
+        <li>App M&oacute;vil Personalizada</li>
+        <li>Control Total de Precios</li>
+      </ul>
+      <a href="https://buy.stripe.com/fZu5kFcrg8PN81AgC8cMM0a?am_id=josejuanvargasbravo2926" target="_blank" class="btn-plan">Seleccionar Plan</a>
+    </div>
+
+
+  </div>
+  <div style="text-align:center;margin-top:32px;">
+    <a href="pricing.html" class="btn-outline">Ver comparativa completa &rarr;</a>
+  </div>
+</section>
+
+<!-- DEMO MULTIMARCA -->
+<section id="demo" style="padding:100px 40px; text-align:center; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(212,163,79,0.08) 0%, transparent 70%); border-top:1px solid var(--border);">
+  <span style="display:inline-block; background:rgba(212,163,79,0.12); border:1px solid rgba(212,163,79,0.35); color:#D4A34F; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:6px 16px; border-radius:20px; margin-bottom:28px;">Demo en Vivo</span>
+  <h2 style="font-size:clamp(28px,4vw,48px); font-weight:900; letter-spacing:-0.5px; margin-bottom:16px;">Mira tu Propio SaaS <span style="color:#D4A34F;">en Acci&oacute;n</span></h2>
+  <p style="color:var(--muted); font-size:16px; max-width:520px; margin:0 auto 48px; line-height:1.7;">Accede ahora y descubre c&oacute;mo se ve el software con tu marca, tu logo y tus precios. Tu negocio digital, listo para vender.</p>
+  <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+    <a href="https://buy.stripe.com/7sY3cx0KCdzp1q87Xm2wU0d?am_id=josejuanvargasbravo1619" target="_blank" style="background:#D4A34F; color:#000; border:none; padding:18px 44px; border-radius:8px; font-size:14px; font-weight:800; letter-spacing:2px; text-transform:uppercase; text-decoration:none; transition:all 0.2s; display:inline-block;">&#9654; Ver Demo Multimarca</a>
+  </div>
+  <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-top:56px;">
+    <div style="text-align:center;">
+      <div style="font-size:36px; font-weight:900; color:#D4A34F;">100%</div>
+      <div style="font-size:11px; font-weight:700; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-top:6px;">Tu Marca</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:36px; font-weight:900; color:#D4A34F;">+15</div>
+      <div style="font-size:11px; font-weight:700; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-top:6px;">Herramientas</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:36px; font-weight:900; color:#D4A34F;">$0</div>
+      <div style="font-size:11px; font-weight:700; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-top:6px;">Costo Mensual</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:36px; font-weight:900; color:#D4A34F;">24/7</div>
+      <div style="font-size:11px; font-weight:700; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-top:6px;">Soporte VIP</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section id="beneficios">
+  <h2 class="section-title">&iquest;Por qu&eacute; GHL Partners?</h2>
+  <p class="section-sub">Compara el modelo tradicional de agencia vs. la simplicidad y rentabilidad de ser Partner.</p>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <h3>Agencia Tradicional</h3>
+      <div class="price-range">$297 - $497/year</div>
+      <ul class="compare-list">
+        <li class="bad">Altos costos fijos mensuales sin importar si tienes clientes</li>
+        <li class="bad">Necesitas equipo de soporte t&eacute;cnico 24/7</li>
+        <li class="bad">Responsabilidad total sobre la infraestructura</li>
+        <li class="bad">Alto riesgo financiero desde el inicio</li>
+      </ul>
+    </div>
+    <div class="compare-card featured">
+      <div class="compare-badge">La Mejor Opci&oacute;n</div>
+      <h3>GHL Partners</h3>
+      <div class="price-range">Anual o Lifetime</div>
+      <ul class="compare-list">
+        <li class="good">Pago &uacute;nico o anual. Sin presi&oacute;n de cuotas mensuales altas</li>
+        <li class="good">Soporte t&eacute;cnico delegado &mdash; nosotros nos encargamos</li>
+        <li class="good">Comisiones del 70% y 15% residual por directos</li>
+        <li class="good">Pagos r&aacute;pidos en 3 d&iacute;as con Stripe o 7 d&iacute;as a cuenta</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonios">
+  <h2 class="section-title">Casos de &Eacute;xito Reales</h2>
+  <p class="section-sub">Partners que ya est&aacute;n construyendo su negocio digital con GHL.</p>
+  <div class="testimonials-grid">
+    <div class="testi-card">
+      <div class="testi-quote">&ldquo;Pas&eacute; de estar quebrado a generar m&aacute;s de $10,000 mensuales en residual en solo 8 meses. El sistema funciona.&rdquo;</div>
+      <div class="testi-author">Carlos Mendoza</div>
+      <div class="testi-role">Partner Senior</div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">&ldquo;Renunci&eacute; a mi trabajo corporativo. Lo mejor de GHL es que el software realmente ayuda a los negocios, se vende solo.&rdquo;</div>
+      <div class="testi-author">Laura G&oacute;mez</div>
+      <div class="testi-role">Partner TOP</div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">&ldquo;Nunca hab&iacute;a hecho activaciones de software. El soporte y la comunidad me llevaron de la mano hasta mi primera activaci&oacute;n.&rdquo;</div>
+      <div class="testi-author">Andr&eacute;s Felipe</div>
+      <div class="testi-role">Partner Junior</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cita">
+  <h2>Activa tu Cuenta <span>GHL Partners</span> Hoy</h2>
+  <p>&Uacute;nete a m&aacute;s de 1,000 partners activos en 15 pa&iacute;ses y empieza a generar ingresos residuales reales.</p>
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+    <a href="pricing.html" class="btn-primary">Ver Planes y Precios</a>
+    <a href="https://buy.stripe.com/6oUbJ3dvk3vt95E3PmcMM0d?am_id=josejuanvargasbravo1737" target="_blank" class="btn-outline">Activar Cuenta Partner</a>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <h2 class="section-title">Preguntas Frecuentes</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">&iquest;Esto es una pir&aacute;mide? <span class="icon">+</span></div>
+      <div class="faq-a">No. GHL Partners es un programa de afiliados y reventa de software leg&iacute;timo. Ganas comisiones por vender un producto real &mdash; software de marketing de alto valor &mdash; no por reclutar personas.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">&iquest;Necesito experiencia t&eacute;cnica? <span class="icon">+</span></div>
+      <div class="faq-a">No. Te proporcionamos entrenamiento completo, materiales de venta y soporte t&eacute;cnico para tus clientes. El equipo de GHL se encarga de la infraestructura.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">&iquest;Cu&aacute;nto tiempo tarda en generar dinero? <span class="icon">+</span></div>
+      <div class="faq-a">Depende de tu dedicaci&oacute;n. Algunos partners hacen su primera venta en la primera semana. Con 5-10 horas semanales puedes tener tus primeras comisiones en el primer mes.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">&iquest;Cu&aacute;les son las comisiones? <span class="icon">+</span></div>
+      <div class="faq-a">70% de comisi&oacute;n directa en cada venta + 15% de residual mensual por cada cliente activo en tu red. Adem&aacute;s hay comisiones por servicios "Done For You" del 30%.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">&iquest;Cu&aacute;ndo recibo mis pagos? <span class="icon">+</span></div>
+      <div class="faq-a">Los pagos se procesan en 3 d&iacute;as h&aacute;biles v&iacute;a Stripe o en 7 d&iacute;as directamente a tu cuenta bancaria.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">
+      <span class="logo-cdg"><span class="cdg-c">C</span><span class="cdg-dg">DG</span></span><span class="logo-name"><span class="logo-core">CORE DYNAMIC</span><span class="logo-group">GROUP</span></span>
+    </div>
+    <p class="footer-desc">Core Dynamic Group &mdash; La plataforma todo en uno que te permite construir un negocio digital rentable, escalable y con ingresos residuales reales.</p>
+    <p class="footer-legal">Aviso Legal: Este sitio es material informativo creado por Core Dynamic Group. Los resultados y proyecciones mostrados son estimados matem&aacute;ticos para ilustrar el plan de compensaci&oacute;n y no constituyen una garant&iacute;a de ingresos.</p>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-end;">
+    <a href="pricing.html" style="color:var(--muted);text-decoration:none;font-size:13px;">Precios</a>
+    <a href="#" style="color:var(--muted);text-decoration:none;font-size:13px;">Comunidad</a>
+    <a href="#" style="color:var(--muted);text-decoration:none;font-size:13px;">Directorio</a>
+    <a href="#" style="color:var(--muted);text-decoration:none;font-size:13px;">Ingreso Partners</a>
+  </div>
+  <div class="footer-copy">&copy; 2026 Core Dynamic Group. Todos los derechos reservados.</div>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.closest('.faq-item');
+      item.classList.toggle('open');
+    });
+  });
+</script>
+
+<!-- WHATSAPP BUTTON -->
+<a href="https://wa.me/2205566117" target="_blank" class="whatsapp-btn" title="Escr&iacute;benos por WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="28" height="28">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+<style>
+  .whatsapp-btn {
+    position: fixed; bottom: 28px; right: 28px; z-index: 999;
+    background: #25D366; color: #fff;
+    width: 60px; height: 60px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+  }
+  .whatsapp-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 28px rgba(37,211,102,0.7);
+  }
+</style>
+</body>
+</html>
