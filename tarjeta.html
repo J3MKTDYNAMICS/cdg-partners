@@ -153,29 +153,24 @@
       text-transform: uppercase;
     }
 
-    /* — MID — */
+    /* — MID (slogan) — */
     .front-mid {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       align-self: center;
       position: relative; z-index: 1;
     }
-    .person-name {
+    .slogan {
       font-family: 'Syne', sans-serif;
-      color: #fff;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 800;
-      letter-spacing: -.2px;
-      line-height: 1;
+      line-height: 1.25;
+      letter-spacing: -.1px;
     }
-    .person-role {
-      color: var(--cyan);
-      font-size: 7px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
+    .slogan .s-white { color: #fff; }
+    .slogan .s-gold  { color: var(--gold); }
+    .slogan .s-cyan  { color: var(--cyan); }
 
     /* — BOTTOM — */
     .front-bottom {
@@ -185,27 +180,28 @@
       position: relative; z-index: 1;
     }
 
-    .contacts { display: flex; flex-direction: column; gap: 3.5px; }
+    .contacts { display: flex; flex-direction: column; gap: 5px; }
     .citem {
       display: flex;
       align-items: center;
-      gap: 5px;
-      font-size: 6.5px;
+      gap: 6px;
+      font-size: 8px;
       color: #2a4a5e;
     }
-    .citem-val { color: #94a3b8; font-weight: 600; }
-    .citem-ico { font-size: 7.5px; }
+    .citem-val { color: #e2e8f0; font-weight: 700; }
+    .citem-ico { font-size: 9px; }
 
-    .qr-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .qr-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; }
     .qr-wrap img {
-      width: 52px; height: 52px;
-      border-radius: 5px;
-      border: 1px solid var(--border);
+      width: 64px; height: 64px;
+      border-radius: 6px;
+      border: 1.5px solid var(--cyan);
       display: block;
+      box-shadow: 0 0 10px rgba(28,194,230,.25);
     }
     .qr-label {
-      color: #1a3347;
-      font-size: 5px;
+      color: var(--cyan);
+      font-size: 5.5px;
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
@@ -392,8 +388,10 @@
     </div>
 
     <div class="front-mid">
-      <div class="person-name">Jose Juan Vargas</div>
-      <div class="person-role">GHL Partner &mdash; Multimarca Lifetime</div>
+      <div class="slogan">
+        <span class="s-white">Tu Propio SaaS.</span><br/>
+        <span class="s-gold">Tu Marca.</span> <span class="s-cyan">Tu Imperio.</span>
+      </div>
     </div>
 
     <div class="front-bottom">
