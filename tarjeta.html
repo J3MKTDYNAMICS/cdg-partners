@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Tarjeta CDG — Imprimir</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cyan: #1CC2E6;
+      --gold: #D4A34F;
+      --bg:   #020B14;
+      --card: #041830;
+      --border: #0d2d45;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ── PANTALLA ── */
+    body {
+      background: #0a0a0a;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px 64px;
+      gap: 0;
+    }
+
+    .page-title {
+      color: #333;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    /* ── TARJETA: medidas exactas 3.5 × 2 in a 96 dpi ── */
+    .card {
+      width:  336px;   /* 3.5in × 96 */
+      height: 192px;   /* 2in  × 96 */
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    /* sombra pantalla */
+    .card-screen {
+      box-shadow:
+        0 0 0 1px rgba(13,45,69,.9),
+        0 20px 60px rgba(0,0,0,.8),
+        0 2px 0 var(--gold);
+    }
+
+    /* separador de lado entre frente/reverso */
+    .card-sep {
+      width: 336px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .card-sep::before,
+    .card-sep::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #1a1a1a;
+    }
+    .card-sep span {
+      color: #2a2a2a;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* ────────────────────────────────
+       FRENTE
+    ──────────────────────────────── */
+    .front {
+      background: var(--bg);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 16px 20px 14px;
+    }
+
+    /* línea superior dorado→cyan */
+    .front::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold) 0%, var(--cyan) 60%, transparent 100%);
+    }
+
+    /* glow difuso arriba */
+    .front-glow {
+      position: absolute;
+      top: -50px; left: 50%;
+      transform: translateX(-50%);
+      width: 220px; height: 120px;
+      background: radial-gradient(ellipse, rgba(28,194,230,.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* — TOP — */
+    .front-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      position: relative; z-index: 1;
+    }
+
+    .brand { display: flex; align-items: center; gap: 7px; }
+    .brand-mark {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      line-height: 1;
+    }
+    .brand-mark .c  { color: var(--gold); }
+    .brand-mark .dg { color: var(--cyan); }
+
+    .brand-meta { display: flex; flex-direction: column; gap: 1px; }
+    .brand-name {
+      color: #fff;
+      font-size: 7.5px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .brand-sub {
+      color: var(--cyan);
+      font-size: 5.5px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .tag {
+      background: rgba(212,163,79,.1);
+      border: 1px solid rgba(212,163,79,.25);
+      border-radius: 100px;
+      padding: 2.5px 7px;
+      font-size: 5px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* — MID — */
+    .front-mid {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-self: center;
+      position: relative; z-index: 1;
+    }
+    .person-name {
+      font-family: 'Syne', sans-serif;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -.2px;
+      line-height: 1;
+    }
+    .person-role {
+      color: var(--cyan);
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* — BOTTOM — */
+    .front-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative; z-index: 1;
+    }
+
+    .contacts { display: flex; flex-direction: column; gap: 3.5px; }
+    .citem {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 6.5px;
+      color: #2a4a5e;
+    }
+    .citem-val { color: #94a3b8; font-weight: 600; }
+    .citem-ico { font-size: 7.5px; }
+
+    .qr-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .qr-wrap img {
+      width: 52px; height: 52px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+    .qr-label {
+      color: #1a3347;
+      font-size: 5px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ────────────────────────────────
+       REVERSO
+    ──────────────────────────────── */
+    .back {
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 18px 24px;
+      text-align: center;
+    }
+
+    /* línea inferior */
+    .back::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--cyan) 40%, var(--gold) 100%);
+    }
+
+    .back-glow {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 280px; height: 160px;
+      background: radial-gradient(ellipse, rgba(212,163,79,.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .back-tagline {
+      font-family: 'Syne', sans-serif;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: .5px;
+      line-height: 1.45;
+      text-transform: uppercase;
+      position: relative; z-index: 1;
+    }
+    .back-tagline em { font-style: normal; color: var(--gold); }
+
+    .back-div {
+      width: 32px; height: 1px;
+      background: linear-gradient(90deg, var(--gold), var(--cyan));
+      position: relative; z-index: 1;
+    }
+
+    .back-stats {
+      display: flex;
+      gap: 16px;
+      position: relative; z-index: 1;
+    }
+    .bstat { text-align: center; }
+    .bstat-n {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .bstat-l {
+      font-size: 5px;
+      font-weight: 700;
+      color: #1a3347;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .back-url {
+      font-size: 7px;
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      position: relative; z-index: 1;
+    }
+
+    .back-hint {
+      font-size: 5px;
+      font-weight: 600;
+      color: #122233;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      position: relative; z-index: 1;
+    }
+
+    /* ── BOTÓN IMPRIMIR ── */
+    .print-bar {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .print-note {
+      font-size: 11px;
+      color: #333;
+      text-align: center;
+      line-height: 1.7;
+      max-width: 380px;
+    }
+    .print-note strong { color: var(--cyan); }
+    .btn-print {
+      background: linear-gradient(135deg, var(--gold), #b8883a);
+      color: #000;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 12px 32px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      letter-spacing: .5px;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-print:hover { opacity: .9; }
+
+    /* ────────────────────────────────
+       IMPRESIÓN
+       Hoja carta / A4 → 2 columnas × 5 filas = 10 tarjetas
+    ──────────────────────────────── */
+    @media print {
+      @page { size: letter; margin: .35in; }
+
+      body {
+        background: #fff;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: repeat(5, auto);
+        gap: .1in .2in;
+        padding: 0;
+        align-items: start;
+        justify-items: center;
+      }
+
+      /* ocultar elementos de pantalla */
+      .page-title,
+      .card-sep,
+      .print-bar  { display: none !important; }
+
+      .card {
+        width:  3.5in;
+        height: 2in;
+        border-radius: 8px;
+        box-shadow: none !important;
+        border: .5pt solid #ccc;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        break-inside: avoid;
+      }
+
+      /* repetir frente y reverso alternados para hoja doble faz */
+      /* en impresión simple cara: aparecen ordenados como están */
+    }
+  </style>
+</head>
+<body>
+
+  <p class="page-title">Tarjeta de presentaci&oacute;n &mdash; Core Dynamic Group</p>
+
+  <!-- ═══════════════════════════════
+       FRENTE
+  ═══════════════════════════════ -->
+  <div class="card front card-screen">
+    <div class="front-glow"></div>
+
+    <div class="front-top">
+      <div class="brand">
+        <div class="brand-mark"><span class="c">C</span><span class="dg">DG</span></div>
+        <div class="brand-meta">
+          <span class="brand-name">Core Dynamic</span>
+          <span class="brand-sub">Group</span>
+        </div>
+      </div>
+      <div class="tag">GHL Partner</div>
+    </div>
+
+    <div class="front-mid">
+      <div class="person-name">Jose Juan Vargas</div>
+      <div class="person-role">GHL Partner &mdash; Multimarca Lifetime</div>
+    </div>
+
+    <div class="front-bottom">
+      <div class="contacts">
+        <div class="citem">
+          <span class="citem-ico">&#128241;</span>
+          <span class="citem-val">+220 556 6117</span>
+        </div>
+        <div class="citem">
+          <span class="citem-ico">&#127760;</span>
+          <span class="citem-val">ghl-partners-clone-two.vercel.app</span>
+        </div>
+        <div class="citem">
+          <span class="citem-ico">&#9993;</span>
+          <span class="citem-val">orionj79@gmail.com</span>
+        </div>
+      </div>
+      <div class="qr-wrap">
+        <img src="qr-cdg.png" alt="QR Code &mdash; ghl-partners-clone-two.vercel.app"/>
+        <span class="qr-label">Escanea</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- separador pantalla -->
+  <div class="card-sep"><span>Reverso</span></div>
+
+  <!-- ═══════════════════════════════
+       REVERSO
+  ═══════════════════════════════ -->
+  <div class="card back card-screen">
+    <div class="back-glow"></div>
+
+    <div class="back-tagline">
+      Tu Propio SaaS.<br/>
+      <em>Tu Marca. Tu Precio.</em><br/>
+      Para Siempre.
+    </div>
+
+    <div class="back-div"></div>
+
+    <div class="back-stats">
+      <div class="bstat">
+        <div class="bstat-n">70%</div>
+        <div class="bstat-l">Comisi&oacute;n</div>
+      </div>
+      <div class="bstat">
+        <div class="bstat-n">+15</div>
+        <div class="bstat-l">Herramientas</div>
+      </div>
+      <div class="bstat">
+        <div class="bstat-n">$549</div>
+        <div class="bstat-l">Una vez</div>
+      </div>
+    </div>
+
+    <div class="back-url">ghl-partners-clone-two.vercel.app</div>
+    <div class="back-hint">Escanea el QR &bull; Demo en vivo</div>
+  </div>
+
+  <!-- ── BARRA DE IMPRESIÓN ── -->
+  <div class="print-bar">
+    <p class="print-note">
+      Tama&ntilde;o <strong>3.5 &times; 2 pulgadas</strong>. Imprime en papel cuch&eacute; 300 g/m&sup2;.<br/>
+      Activa <strong>&ldquo;Colores de fondo&rdquo;</strong> en el di&aacute;logo de impresora.<br/>
+      En modo impresi&oacute;n llena la hoja con 10 tarjetas autom&aacute;ticamente.
+    </p>
+    <button class="btn-print" onclick="window.print()">&#128438;&nbsp; Imprimir tarjeta</button>
+  </div>
+
+</body>
+</html>
